@@ -1,1 +1,627 @@
-# verify
+[verify.html](https://github.com/user-attachments/files/26074511/verify.html)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>verify — ahh</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#000;--bg2:#080808;--bg3:#101010;--bg4:#181818;
+  --border:#1c1c1c;--border2:#282828;
+  --txt:#e8e8e8;--txt2:#555;--txt3:#2a2a2a;
+  --green:#00e87a;--red:#ff3555;--yellow:#ffb700;
+  --glow-g:rgba(0,232,122,0.15);--glow-r:rgba(255,53,85,0.15);
+}
+
+body{
+  font-family:'Syne',sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  position:relative;
+}
+
+/* ── BACKGROUND EFFECTS ── */
+.bg-grid{
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size:40px 40px;
+  animation:gridDrift 20s linear infinite;
+  pointer-events:none;z-index:0;
+}
+@keyframes gridDrift{from{transform:translate(0,0);}to{transform:translate(40px,40px);}}
+
+.bg-glow{
+  position:fixed;
+  width:600px;height:600px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(0,232,122,0.04) 0%, transparent 70%);
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  animation:glowPulse 4s ease-in-out infinite;
+  pointer-events:none;z-index:0;
+}
+@keyframes glowPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.6;}50%{transform:translate(-50%,-50%) scale(1.15);opacity:1;}}
+
+.bg-orb{
+  position:fixed;
+  border-radius:50%;
+  pointer-events:none;z-index:0;
+  filter:blur(80px);
+}
+.orb1{width:300px;height:300px;background:rgba(0,232,122,0.06);top:-100px;right:-80px;animation:orbFloat1 8s ease-in-out infinite;}
+.orb2{width:200px;height:200px;background:rgba(255,53,85,0.04);bottom:-60px;left:-60px;animation:orbFloat2 10s ease-in-out infinite;}
+@keyframes orbFloat1{0%,100%{transform:translate(0,0);}50%{transform:translate(-30px,30px);}}
+@keyframes orbFloat2{0%,100%{transform:translate(0,0);}50%{transform:translate(20px,-20px);}}
+
+/* floating particles */
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.particle{
+  position:absolute;
+  width:2px;height:2px;
+  background:rgba(255,255,255,0.3);
+  border-radius:50%;
+  animation:particleFloat linear infinite;
+}
+@keyframes particleFloat{
+  0%{transform:translateY(100vh) translateX(0);opacity:0;}
+  10%{opacity:.6;}
+  90%{opacity:.3;}
+  100%{transform:translateY(-20px) translateX(var(--drift));opacity:0;}
+}
+
+/* ── MAIN CARD ── */
+.card{
+  position:relative;z-index:10;
+  width:440px;max-width:94vw;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
+  animation:cardIn .6s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(30px) scale(.95);}to{opacity:1;transform:translateY(0) scale(1);}}
+
+/* top accent bar */
+.card-accent{
+  height:2px;
+  background:linear-gradient(90deg, transparent, var(--green), transparent);
+  background-size:200% 100%;
+  animation:accentSlide 3s linear infinite;
+}
+@keyframes accentSlide{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+.card-body{padding:36px 36px 32px;}
+
+/* ── SERVER HEADER ── */
+.server-header{
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:28px;
+  animation:fadeUp .5s ease .1s both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.server-icon{
+  width:52px;height:52px;
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:800;
+  position:relative;overflow:hidden;
+  flex-shrink:0;
+}
+.server-icon::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.05),transparent);
+  border-radius:14px;
+}
+.server-name{font-size:18px;font-weight:800;color:#fff;line-height:1.2;}
+.server-sub{font-size:11px;color:var(--txt2);margin-top:3px;font-family:'DM Mono',monospace;}
+
+/* ── DIVIDER ── */
+.divider{
+  height:1px;background:var(--border);
+  margin:0 -36px 28px;
+  position:relative;overflow:hidden;
+}
+.divider::after{
+  content:'';position:absolute;top:0;left:-100%;
+  width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(0,232,122,0.3),transparent);
+  animation:dividerScan 4s ease-in-out infinite;
+}
+@keyframes dividerScan{0%{left:-60%;}100%{left:160%;}}
+
+/* ── TITLE SECTION ── */
+.title-section{
+  text-align:center;margin-bottom:28px;
+  animation:fadeUp .5s ease .2s both;
+}
+.shield-icon{
+  width:64px;height:64px;
+  background:var(--bg3);border:1px solid var(--border2);
+  border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;margin:0 auto 16px;
+  position:relative;
+  animation:shieldPulse 3s ease-in-out infinite;
+}
+@keyframes shieldPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(0,232,122,0);}
+  50%{box-shadow:0 0 0 8px rgba(0,232,122,0.06);}
+}
+.shield-icon i{color:var(--green);}
+.title{font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;}
+.subtitle{font-size:12px;color:var(--txt2);line-height:1.6;}
+
+/* ── STEPS ── */
+.steps{
+  display:flex;flex-direction:column;gap:10px;
+  margin-bottom:24px;
+}
+.step{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;
+  transition:all .2s ease;
+  animation:fadeUp .5s ease both;
+  cursor:default;
+}
+.step:nth-child(1){animation-delay:.3s;}
+.step:nth-child(2){animation-delay:.4s;}
+.step:nth-child(3){animation-delay:.5s;}
+.step:hover{border-color:var(--border2);background:var(--bg4);transform:translateX(3px);}
+.step-num{
+  width:22px;height:22px;
+  background:var(--bg4);border:1px solid var(--border2);
+  border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:800;color:var(--txt2);
+  flex-shrink:0;margin-top:1px;
+  font-family:'DM Mono',monospace;
+}
+.step-text{font-size:12px;color:var(--txt2);line-height:1.5;}
+.step-text b{color:var(--txt);font-weight:700;}
+
+/* ── CAPTCHA AREA ── */
+.captcha-wrap{
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:12px;padding:18px;
+  margin-bottom:20px;
+  animation:fadeUp .5s ease .6s both;
+}
+.captcha-label{font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px;}
+.captcha-code{
+  font-family:'DM Mono',monospace;
+  font-size:26px;font-weight:500;
+  color:#fff;letter-spacing:8px;
+  text-align:center;
+  padding:14px;
+  background:var(--bg4);border:1px solid var(--border2);border-radius:8px;
+  margin-bottom:12px;
+  position:relative;overflow:hidden;
+  user-select:none;
+}
+.captcha-code::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    45deg,transparent,transparent 2px,
+    rgba(255,255,255,.015) 2px,rgba(255,255,255,.015) 4px
+  );
+}
+.captcha-code span{
+  position:relative;z-index:1;
+  display:inline-block;
+  animation:charWobble 3s ease-in-out infinite;
+}
+.captcha-code span:nth-child(1){animation-delay:0s;transform:rotate(-3deg);}
+.captcha-code span:nth-child(2){animation-delay:.1s;transform:rotate(2deg) translateY(-2px);}
+.captcha-code span:nth-child(3){animation-delay:.2s;transform:rotate(-1deg) translateY(1px);}
+.captcha-code span:nth-child(4){animation-delay:.3s;transform:rotate(3deg);}
+.captcha-code span:nth-child(5){animation-delay:.4s;transform:rotate(-2deg) translateY(-1px);}
+.captcha-code span:nth-child(6){animation-delay:.5s;transform:rotate(1deg) translateY(2px);}
+@keyframes charWobble{0%,100%{transform:rotate(var(--r,0deg)) translateY(var(--y,0px));}50%{transform:rotate(calc(var(--r,0deg) * -1)) translateY(calc(var(--y,0px) * -1));}}
+
+.captcha-actions{display:flex;gap:8px;}
+.captcha-input{
+  flex:1;background:var(--bg4);border:1px solid var(--border2);
+  border-radius:7px;padding:9px 12px;
+  color:#fff;font-size:13px;font-family:'DM Mono',monospace;
+  outline:none;letter-spacing:3px;transition:border .15s,box-shadow .15s;
+}
+.captcha-input:focus{border-color:rgba(255,255,255,.2);box-shadow:0 0 0 3px rgba(255,255,255,.04);}
+.captcha-input::placeholder{color:var(--txt3);letter-spacing:1px;font-size:11px;}
+.refresh-btn{
+  width:38px;height:38px;
+  background:var(--bg4);border:1px solid var(--border2);
+  border-radius:7px;cursor:pointer;color:var(--txt2);font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;flex-shrink:0;
+}
+.refresh-btn:hover{background:var(--border);color:#fff;transform:rotate(15deg);}
+.refresh-btn:active{transform:rotate(180deg);}
+
+/* ── CHECKBOX ── */
+.check-wrap{
+  display:flex;align-items:center;gap:12px;
+  padding:14px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;margin-bottom:20px;cursor:pointer;
+  transition:all .2s;
+  animation:fadeUp .5s ease .65s both;
+  user-select:none;
+}
+.check-wrap:hover{border-color:var(--border2);background:var(--bg4);}
+.check-wrap.checked{border-color:rgba(0,232,122,0.3);background:rgba(0,232,122,0.04);}
+.custom-check{
+  width:20px;height:20px;
+  background:var(--bg4);border:1px solid var(--border2);
+  border-radius:5px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s cubic-bezier(.34,1.56,.64,1);
+}
+.check-wrap.checked .custom-check{
+  background:var(--green);border-color:var(--green);
+  box-shadow:0 0 12px rgba(0,232,122,0.4);
+  animation:checkBounce .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes checkBounce{0%{transform:scale(.6);}100%{transform:scale(1);}}
+.custom-check i{font-size:10px;color:#000;opacity:0;transition:opacity .15s;}
+.check-wrap.checked .custom-check i{opacity:1;}
+.check-text{font-size:12px;color:var(--txt2);line-height:1.5;}
+.check-text b{color:var(--txt);}
+
+/* ── VERIFY BUTTON ── */
+.verify-btn{
+  width:100%;padding:14px;
+  background:#fff;color:#000;
+  border:none;border-radius:10px;
+  font-size:13px;font-weight:800;
+  cursor:pointer;font-family:'Syne',sans-serif;
+  transition:all .2s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+  animation:fadeUp .5s ease .7s both;
+  letter-spacing:.3px;
+}
+.verify-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 0%,rgba(0,232,122,0.15) 50%,transparent 100%);
+  transform:translateX(-100%);
+  transition:transform .4s ease;
+}
+.verify-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,255,255,.12);}
+.verify-btn:hover::before{transform:translateX(100%);}
+.verify-btn:active{transform:scale(.97);}
+.verify-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+
+.verify-btn.loading{background:#111;color:var(--green);border:1px solid rgba(0,232,122,.2);}
+.verify-btn.success{background:var(--green);color:#000;}
+.verify-btn.error{background:rgba(255,53,85,.1);color:var(--red);border:1px solid rgba(255,53,85,.2);}
+
+/* ── STATUS ── */
+.status-bar{
+  display:flex;align-items:center;gap:8px;
+  margin-top:16px;padding:10px 14px;
+  border-radius:8px;font-size:11px;font-weight:600;
+  opacity:0;transition:opacity .3s ease;
+  animation:fadeUp .3s ease both;
+}
+.status-bar.show{opacity:1;}
+.status-bar.ok{background:rgba(0,232,122,.08);border:1px solid rgba(0,232,122,.15);color:var(--green);}
+.status-bar.fail{background:rgba(255,53,85,.08);border:1px solid rgba(255,53,85,.15);color:var(--red);}
+.status-bar i{font-size:12px;}
+
+/* ── FOOTER ── */
+.card-footer{
+  padding:14px 36px;
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  animation:fadeUp .5s ease .8s both;
+}
+.footer-badge{
+  display:flex;align-items:center;gap:6px;
+  font-size:10px;color:var(--txt2);font-family:'DM Mono',monospace;
+}
+.footer-badge .dot{
+  width:5px;height:5px;background:var(--green);border-radius:50%;
+  box-shadow:0 0 5px var(--green);
+  animation:dotPulse 2s ease infinite;
+}
+@keyframes dotPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.footer-logo{font-size:11px;font-weight:800;color:var(--txt3);}
+
+/* ── SUCCESS OVERLAY ── */
+.success-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:#000;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:20px;
+  opacity:0;pointer-events:none;
+  transition:opacity .4s ease;
+}
+.success-overlay.show{opacity:1;pointer-events:all;}
+.success-icon{
+  width:80px;height:80px;
+  background:rgba(0,232,122,.1);border:1px solid rgba(0,232,122,.2);
+  border-radius:24px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;color:var(--green);
+  animation:successPop .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes successPop{from{transform:scale(0) rotate(-10deg);}to{transform:scale(1) rotate(0);}}
+.success-title{font-size:22px;font-weight:800;color:#fff;animation:fadeUp .5s ease .1s both;}
+.success-sub{font-size:12px;color:var(--txt2);animation:fadeUp .5s ease .2s both;}
+.success-particles{position:fixed;inset:0;pointer-events:none;}
+
+/* ── CONFETTI ── */
+.confetti-piece{
+  position:fixed;
+  width:6px;height:6px;
+  border-radius:1px;
+  animation:confettiFall linear forwards;
+  pointer-events:none;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
+  100%{transform:translateY(110vh) rotate(720deg);opacity:0;}
+}
+
+/* scan line effect */
+.scanline{
+  position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:repeating-linear-gradient(
+    0deg,transparent,transparent 2px,
+    rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px
+  );
+}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+<div class="orb1 bg-orb"></div>
+<div class="orb2 bg-orb"></div>
+<div class="particles" id="particles"></div>
+<div class="scanline"></div>
+
+<!-- MAIN CARD -->
+<div class="card" id="card">
+  <div class="card-accent"></div>
+  <div class="card-body">
+
+    <!-- Server Header -->
+    <div class="server-header">
+      <div class="server-icon">a</div>
+      <div>
+        <div class="server-name">ahh</div>
+        <div class="server-sub">server verification</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Title -->
+    <div class="title-section">
+      <div class="shield-icon"><i class="fas fa-shield-halved"></i></div>
+      <div class="title">verify your account</div>
+      <div class="subtitle">complete the steps below to gain access<br>to all channels in the server</div>
+    </div>
+
+    <!-- Steps -->
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-text"><b>agree to the rules</b> — by verifying you confirm you've read and accepted the server rules</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-text"><b>solve the captcha</b> — type the characters shown below to prove you're human</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-text"><b>get access</b> — you'll receive the <b>@verified</b> role instantly</div>
+      </div>
+    </div>
+
+    <!-- Captcha -->
+    <div class="captcha-wrap">
+      <div class="captcha-label">captcha — type what you see</div>
+      <div class="captcha-code" id="captchaDisplay"></div>
+      <div class="captcha-actions">
+        <input class="captcha-input" id="captchaInput" placeholder="type the code..." maxlength="6" autocomplete="off" spellcheck="false">
+        <button class="refresh-btn" onclick="newCaptcha()" title="new code"><i class="fas fa-rotate-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Checkbox -->
+    <div class="check-wrap" id="checkWrap" onclick="toggleCheck()">
+      <div class="custom-check" id="customCheck"><i class="fas fa-check"></i></div>
+      <div class="check-text">I have read and agree to the <b>server rules</b> and <b>terms of service</b>. I understand that violating them may result in a ban.</div>
+    </div>
+
+    <!-- Button -->
+    <button class="verify-btn" id="verifyBtn" onclick="verify()">
+      <span id="btnText"><i class="fas fa-shield-halved"></i> &nbsp;verify me</span>
+    </button>
+
+    <!-- Status -->
+    <div class="status-bar" id="statusBar">
+      <i id="statusIcon"></i>
+      <span id="statusText"></span>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="card-footer">
+    <div class="footer-badge">
+      <span class="dot"></span>
+      secured · encrypted
+    </div>
+    <div class="footer-logo">ahh bot</div>
+  </div>
+</div>
+
+<!-- Success Overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon"><i class="fas fa-check"></i></div>
+  <div class="success-title">you're verified! 🎉</div>
+  <div class="success-sub">welcome to the server — you now have full access</div>
+</div>
+
+<script>
+// ── PARTICLES ─────────────────────────────────────────
+const pContainer = document.getElementById('particles');
+for(let i = 0; i < 25; i++){
+  const p = document.createElement('div');
+  p.className = 'particle';
+  const drift = (Math.random() - 0.5) * 200;
+  p.style.cssText = `
+    left:${Math.random()*100}%;
+    --drift:${drift}px;
+    animation-duration:${8+Math.random()*12}s;
+    animation-delay:${Math.random()*10}s;
+    opacity:${0.2+Math.random()*0.4};
+    width:${1+Math.random()*2}px;
+    height:${1+Math.random()*2}px;
+  `;
+  pContainer.appendChild(p);
+}
+
+// ── CAPTCHA ───────────────────────────────────────────
+const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+let currentCode = '';
+
+function newCaptcha(){
+  currentCode = Array.from({length:6}, ()=>CHARS[Math.floor(Math.random()*CHARS.length)]).join('');
+  const display = document.getElementById('captchaDisplay');
+  display.innerHTML = currentCode.split('').map((c,i)=>{
+    const r = (Math.random()-0.5)*6;
+    const y = (Math.random()-0.5)*4;
+    const colors = ['#fff','#ccc','#aaa','#e0e0e0','#ddd','#eee'];
+    const col = colors[Math.floor(Math.random()*colors.length)];
+    return `<span style="--r:${r}deg;--y:${y}px;color:${col};animation-delay:${i*0.1}s">${c}</span>`;
+  }).join('');
+  document.getElementById('captchaInput').value = '';
+  // refresh icon spin
+  const btn = document.querySelector('.refresh-btn i');
+  btn.style.transition = 'transform .4s ease';
+  btn.style.transform = 'rotate(360deg)';
+  setTimeout(()=>{ btn.style.transition='none'; btn.style.transform='rotate(0deg)'; }, 400);
+}
+
+// ── CHECKBOX ──────────────────────────────────────────
+let checked = false;
+function toggleCheck(){
+  checked = !checked;
+  document.getElementById('checkWrap').classList.toggle('checked', checked);
+}
+
+// ── VERIFY ────────────────────────────────────────────
+function setStatus(msg, type){
+  const bar = document.getElementById('statusBar');
+  const icon = document.getElementById('statusIcon');
+  const text = document.getElementById('statusText');
+  bar.className = 'status-bar show ' + type;
+  icon.className = type==='ok' ? 'fas fa-check-circle' : 'fas fa-circle-xmark';
+  text.textContent = msg;
+}
+
+async function verify(){
+  const input = document.getElementById('captchaInput').value.toUpperCase().trim();
+  const btn = document.getElementById('verifyBtn');
+  const btnText = document.getElementById('btnText');
+
+  if(!checked){
+    setStatus('please agree to the server rules first', 'fail');
+    document.getElementById('checkWrap').style.animation = 'none';
+    document.getElementById('checkWrap').style.borderColor = 'rgba(255,53,85,0.4)';
+    setTimeout(()=>document.getElementById('checkWrap').style.borderColor = '', 1500);
+    return;
+  }
+
+  if(!input){
+    setStatus('please type the captcha code', 'fail');
+    document.getElementById('captchaInput').focus();
+    return;
+  }
+
+  if(input !== currentCode){
+    setStatus('wrong captcha — try again', 'fail');
+    btn.classList.add('error');
+    btnText.innerHTML = '<i class="fas fa-times"></i> &nbsp;wrong code';
+    // shake
+    const card = document.getElementById('card');
+    card.style.animation = 'none';
+    card.style.transform = 'translateX(-6px)';
+    setTimeout(()=>card.style.transform='translateX(6px)', 80);
+    setTimeout(()=>card.style.transform='translateX(-4px)', 160);
+    setTimeout(()=>card.style.transform='translateX(4px)', 240);
+    setTimeout(()=>card.style.transform='translateX(0)', 320);
+    setTimeout(()=>{
+      btn.classList.remove('error');
+      btnText.innerHTML = '<i class="fas fa-shield-halved"></i> &nbsp;verify me';
+    }, 1500);
+    newCaptcha();
+    return;
+  }
+
+  // loading
+  btn.classList.add('loading');
+  btnText.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> &nbsp;verifying...';
+  btn.disabled = true;
+
+  await new Promise(r => setTimeout(r, 1800));
+
+  // success
+  btn.classList.remove('loading');
+  btn.classList.add('success');
+  btnText.innerHTML = '<i class="fas fa-check"></i> &nbsp;verified!';
+  setStatus('verification successful — welcome to the server!', 'ok');
+
+  setTimeout(()=>{
+    launchConfetti();
+    document.getElementById('successOverlay').classList.add('show');
+  }, 600);
+}
+
+// ── CONFETTI ──────────────────────────────────────────
+function launchConfetti(){
+  const colors = ['#00e87a','#fff','#ffb700','#ff3555','#00d4ff','#9b8cff'];
+  for(let i=0;i<80;i++){
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    c.style.cssText = `
+      left:${Math.random()*100}vw;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      width:${4+Math.random()*6}px;
+      height:${4+Math.random()*6}px;
+      animation-duration:${1.5+Math.random()*2}s;
+      animation-delay:${Math.random()*0.5}s;
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+    `;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(), 3500);
+  }
+}
+
+// ── ENTER KEY ─────────────────────────────────────────
+document.getElementById('captchaInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') verify();
+});
+
+// ── INIT ──────────────────────────────────────────────
+newCaptcha();
+</script>
+</body>
+</html>

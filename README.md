@@ -1,4 +1,4 @@
-[verify.html](https://github.com/user-attachments/files/26074511/verify.html)
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
